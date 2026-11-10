@@ -6,6 +6,7 @@ import "../src/SimpleStorage.sol";
 
 contract SimpleStorageTest is Test {
     SimpleStorage public simpleStorage;
+    address riuk = address(0xBEEF);
 
     function setUp() public {
         simpleStorage = new SimpleStorage();
@@ -22,6 +23,24 @@ contract SimpleStorageTest is Test {
         assertEq(favoriteNumber, 25);
         assertEq(name, "Alice");
         assertEq(simpleStorage.nameToFavoriteNumber("Alice"), 25);
+    }
+
+    function testUpdatePerson() public {
+    }
+
+    function testOnlyOwner() public {
+        vm.prank(riuk);
+        vm.expectRevert(SimpleStorage.NotOwner.selector);
+        simpleStorage.store(42);
+    }
+
+    //Test de fuzzing
+    function testFuzzOnlyOwner(address ad, uint256 _favoriteNumber) public {
+        vm.assume(ad != address(0));
+        vm.assume(ad != address(this));
+        vm.prank(ad);
+        vm.expectRevert(SimpleStorage.NotOwner.selector);
+        simpleStorage.store(_favoriteNumber);
     }
 
 }

@@ -25,5 +25,16 @@ contract StorageFactoryTest is Test {
         // Check if the value was stored correctly in the first SimpleStorage contract
         assertEq(storageFactory.listOfSimpleStorageContract(0).retrieve(), 42);
     }
+
+    function testSfstoreOutOfBoundsEmptyArray() public {
+        vm.expectRevert();
+        storageFactory.sfStore(42, 0); // This should revert because there is no contract at index 1
+    }
+
+    function testSfstoreOutOfBoundshighIndex() public {
+        storageFactory.createSimpleStorageContract();
+        vm.expectRevert();
+        storageFactory.sfStore(42, 1); // This should revert because there is no contract at index 1
+    }
     
 }
