@@ -36,7 +36,7 @@ contract StorageFactoryTest is Test {
     function testSfstoreOutOfBoundshighIndex() public {
         storageFactory.createSimpleStorageContract();
         vm.expectRevert(stdError.indexOOBError);
-        storageFactory.sfStore(42, 1); // This should revert because there is no contract at index 2
+        storageFactory.sfStore(42, 1); // This should revert because there is no contract at index 1
         //Conclusion : la fonction sfStore ne vérifie pas si l'index est valide avant d'accéder à la liste des contrats SimpleStorage. Il faudrait ajouter une vérification pour s'assurer que l'index est inférieur à la longueur de la liste.
     }
 
