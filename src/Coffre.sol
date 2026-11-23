@@ -12,7 +12,7 @@ contract Coffre {
     event Retrait(address indexed user, uint256 amount);
     error TropTot();
     error SoldeInsuffisant();
-    error echecRetrait();
+    error EchecRetrait();
     error RienARetirer();
     error SoldeDejaBloque();
 
@@ -40,7 +40,7 @@ contract Coffre {
 
         (bool success, ) = msg.sender.call{value: amount}("");
         if (!success) {
-            revert echecRetrait();
+            revert EchecRetrait();
         }
 
         emit Retrait(msg.sender, amount);
