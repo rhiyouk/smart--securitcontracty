@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 
 contract Coffre {
 
@@ -11,13 +11,18 @@ contract Coffre {
 
     event Retrait(address indexed user, uint256 amount);
     error TropTot();
+    error SoldeInsuffisant();
+    error echecRetrait();
+    error RienARetirer();
     error SoldeDejaBloque();
 
     function deposer() external payable {
         if(balances[msg.sender] > 0) {
             revert SoldeDejaBloque();
         }
-        require(msg.value > 0, "Vous devez envoyer de l'ether pour deposer.");
+        if(msg.value == 0) {
+            revert SoldeInsuffisant();
+        }
         balances[msg.sender] += msg.value;
         unlockTime[msg.sender] = block.timestamp + 7 days;
     }
@@ -27,11 +32,16 @@ contract Coffre {
             revert TropTot();
         }
         uint256 amount = balances[msg.sender];
+        if (amount == 0) {
+            revert RienARetirer();
+        }
         balances[msg.sender] = 0;
         unlockTime[msg.sender] = 0;
 
         (bool success, ) = msg.sender.call{value: amount}("");
-        require(success, "Echec du retrait");
+        if (!success) {
+            revert echecRetrait();
+        }
 
         emit Retrait(msg.sender, amount);
     }
