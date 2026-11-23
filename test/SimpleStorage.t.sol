@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "forge-std/Test.sol";
+import {Test, stdError} from "forge-std/Test.sol";
 import "../src/SimpleStorage.sol";
 
 contract SimpleStorageTest is Test {
@@ -26,6 +26,13 @@ contract SimpleStorageTest is Test {
     }
 
     function testUpdatePerson() public {
+        simpleStorage.addPerson("Alice", 25);
+        simpleStorage.addPerson("Alice", 30);
+        (uint256 favoriteNumber, string memory name) = simpleStorage.listOfPeople(0);
+        assertEq(favoriteNumber, 25);
+        assertEq(name, "Alice");
+        assertEq(simpleStorage.nameToFavoriteNumber("Alice"), 30);
+        //Conclusion : la fonction addPerson ne met pas à jour la personne si elle existe déjà, elle ajoute une nouvelle personne avec le même nom. Il faudrait modifier la fonction pour qu'elle mette à jour la personne existante.
     }
 
     function testOnlyOwner() public {
