@@ -106,7 +106,7 @@ contract CoffreTest is Test {
     }
 
     function testFuzz_InconnuNePeutRienRetirer(address inconnu) public {
-        vm.assume(inconnu != msg.sender);
+        //vm.assume(inconnu != msg.sender);
         vm.prank(inconnu);
         vm.expectRevert(Coffre.RienARetirer.selector);
         coffre.retirer();
