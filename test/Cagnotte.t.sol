@@ -27,8 +27,41 @@ contract CagnotteTest is Test {
         assertEq(newCagnotte.fraisBps(), 300);
     }
 
-    function testDoS() public {
+    function testRetraitAvecFraisFaitEchouerDepot() public {
+        // Alice dépose 1 ether dans la cagnotte
+        hoax(Alice, 2 ether);
+        cagnotte.deposer{value: 1 ether}();
 
+        // Bob dépose 1 ether dans la cagnotte
+        hoax(Bob, 1 ether);
+        cagnotte.deposer{value: 1 ether}();
+
+        // Alice retire tout avec frais
+        vm.prank(Alice);
+        cagnotte.retirerTout();
+
+        // Vérifie que le solde de la cagnotte est supperieur au total des dépôts après le retrait avec frais
+        uint256 balance = address(cagnotte).balance; 
+
+        assertGt(balance, cagnotte.totalDepots(), "solde");
+
+        // Vérifie qu'une nouvelle tentative de dépôt échoue
+        vm.expectRevert("Etat incoherent");   
+        vm.prank(Alice);
+        cagnotte.deposer{value: 1 ether}();
+    }
+
+    function testPerteDePrecisionDansCalculFrais() public {
+        // Alice dépose 1 ether dans la cagnotte
+        hoax(Alice, 1 ether);
+        cagnotte.deposer{value: 9999 wei}();
+
+        vm.prank(Alice);
+        cagnotte.retirerTout();
+
+        //verifier que le solde d'alice est de 1 ether et que les frais ont été perdus à cause de la division entière
+        uint256 balance = Alice.balance;
+        assertGt(balance, 1, "solde");
     }
 
 }

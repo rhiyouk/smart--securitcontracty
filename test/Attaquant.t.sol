@@ -13,7 +13,7 @@ contract AttaquantTest is Test {
 
     function setUp() public {
         cagnotte = new Cagnotte();
-        attaquant = new Attaquant(cagnotte);
+        attaquant = new Attaquant{value: 1 ether}(cagnotte);
     }
 
     function testAttaque() public {
@@ -26,7 +26,7 @@ contract AttaquantTest is Test {
         cagnotte.deposer{value: 10 ether}();
 
         // L'attaquant attaque la cagnotte
-        hoax(address(attaquant), 1 ether);
+        
         attaquant.attaquer();
         uint256 frais = 12 ether / 10000 * 100; // 1% de frais
         // Vérifie que la cagnotte est vide après l'attaque
